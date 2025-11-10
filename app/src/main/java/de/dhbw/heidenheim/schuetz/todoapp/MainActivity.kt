@@ -1,6 +1,7 @@
 package de.dhbw.heidenheim.schuetz.todoapp
 
 import android.os.Bundle
+import android.util.Log.i
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -40,18 +42,16 @@ class MainActivity : ComponentActivity() {
 @Preview (showBackground = true)
 @Composable
 fun ToDoScreen(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
-    Column (
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
     ) {
-        for (i in 1..500) {
+        items(count = 500) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 24.dp),
-                text = "Item $i",
+                text = "Item $it",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
