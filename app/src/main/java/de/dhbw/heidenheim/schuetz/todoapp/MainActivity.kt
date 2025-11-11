@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,9 +46,9 @@ fun ToDoScreen(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
     ) {
-        items(items = todos) { todo ->
+        itemsIndexed(todos) { index, todo ->
                 Text(
-                    text = todo,
+                    text = "$index: $todo",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
