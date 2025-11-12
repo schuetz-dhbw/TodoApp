@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,10 +19,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -114,28 +118,58 @@ fun TodoItem(
     onToggle: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+    SwipeToDismissBox(
+        state = rememberSwipeToDismissBoxState(
+            confirmValueChange = {
+                if (it == SwipeToDismissBoxValue.EndToStart) {
+                    onDelete()
+                    true
+                } else false
+            }
+        ),
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    "Löschen",
+                    tint = Color.White,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        },
+        enableDismissFromStartToEnd = false
     ) {
-        Text(
-            text = todo.title,
+        Row(
             modifier = Modifier
-                .weight(1f),
-            fontSize = 24.sp
-        )
-        Checkbox(
-            checked = todo.isDone,
-            onCheckedChange = { onToggle() }
-        )
-        IconButton(onClick = onDelete) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Löschen",
-                tint = Color.Red
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = todo.title,
+                modifier = Modifier
+                    .weight(1f),
+                fontSize = 24.sp
             )
+            Checkbox(
+                checked = todo.isDone,
+                onCheckedChange = { onToggle() }
+            )
+            /*
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Löschen",
+                    tint = Color.Red
+                )
+            }
+             */
         }
     }
 }
