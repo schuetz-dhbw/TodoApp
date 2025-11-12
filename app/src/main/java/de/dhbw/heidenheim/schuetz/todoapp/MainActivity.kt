@@ -98,31 +98,44 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
                 .fillMaxHeight(1f)
         ) {
             items(todos, key = { it.id }) { todo ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = todo.title,
-                        modifier = Modifier
-                            .weight(1f),
-                        fontSize = 24.sp
-                    )
-                    Checkbox(
-                        checked = todo.isDone,
-                        onCheckedChange = { viewModel.toggleTodo(todo.id) }
-                    )
-                    IconButton(onClick = { viewModel.deleteTodo(todo.id) }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Löschen",
-                            tint = Color.Red
-                        )
-                    }
-                }
+                TodoItem(
+                    todo = todo,
+                    onToggle = { viewModel.toggleTodo(todo.id) },
+                    onDelete = { viewModel.deleteTodo(todo.id) }
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun TodoItem(
+    todo: Todo,
+    onToggle: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = todo.title,
+            modifier = Modifier
+                .weight(1f),
+            fontSize = 24.sp
+        )
+        Checkbox(
+            checked = todo.isDone,
+            onCheckedChange = { onToggle() }
+        )
+        IconButton(onClick = onDelete) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Löschen",
+                tint = Color.Red
+            )
         }
     }
 }
