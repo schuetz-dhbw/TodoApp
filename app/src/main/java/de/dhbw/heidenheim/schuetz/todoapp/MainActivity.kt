@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -66,6 +68,8 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
     // Hier: lokaler State für TextField - geht bei Config Changes verloren
     // Könnte man auch wieder ins ViewModel auslagern - analog Notes App
     var newTodoText by remember { mutableStateOf("") }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var todoToEdit by remember { mutableStateOf<Todo?>(null) }
 
     Column(
         modifier = modifier
@@ -119,19 +123,39 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
                     TodoItem(
                         todo = todo,
                         onToggle = { viewModel.toggleTodo(todo.id) },
-                        onDelete = { viewModel.deleteTodo(todo.id) }
+                        onDelete = { viewModel.deleteTodo(todo.id) },
+                        onClick = {
+                            todoToEdit = todo
+                            showEditDialog = true
+                        }
                     )
                 }
             }
         }
     }
+    if (showEditDialog && todoToEdit != null) {
+        EditTodoDialog(
+            todo = todoToEdit!!,
+            onDismiss = {
+                showEditDialog = false
+                todoToEdit = null
+            },
+            onSave = { newTitle ->
+                viewModel.updateTodo(todoToEdit!!.id, newTitle)
+                showEditDialog = false
+                todoToEdit = null
+            }
+        )
+    }
 }
+
 
 @Composable
 fun TodoItem(
     todo: Todo,
     onToggle: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit
 ) {
     SwipeToDismissBox(
         state = rememberSwipeToDismissBoxState(
@@ -163,7 +187,8 @@ fun TodoItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable { onClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -187,4 +212,36 @@ fun TodoItem(
              */
         }
     }
+}
+
+@Composable
+fun EditTodoDialog(
+    todo: Todo,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit
+) {
+    var editText by remember { mutableStateOf(todo.title) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Todo bearbeiten") },
+        text = {
+            OutlinedTextField(
+                value = editText,
+                onValueChange = { editText = it },
+                label = { Text("Titel") },
+                singleLine = true
+            )
+        },
+        confirmButton = {
+            Button(onClick = { onSave(editText) }) {
+                Text("Speichern")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Abbrechen")
+            }
+        }
+    )
 }
