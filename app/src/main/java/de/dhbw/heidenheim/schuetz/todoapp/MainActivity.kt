@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -101,12 +102,26 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
             modifier = Modifier
                 .fillMaxHeight(1f)
         ) {
-            items(todos, key = { it.id }) { todo ->
-                TodoItem(
-                    todo = todo,
-                    onToggle = { viewModel.toggleTodo(todo.id) },
-                    onDelete = { viewModel.deleteTodo(todo.id) }
-                )
+            if (todos.isEmpty()) {
+                item {
+                    Text(
+                        text = "Keine Einträge vorhanden",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                items(todos, key = { it.id }) { todo ->
+                    TodoItem(
+                        todo = todo,
+                        onToggle = { viewModel.toggleTodo(todo.id) },
+                        onDelete = { viewModel.deleteTodo(todo.id) }
+                    )
+                }
             }
         }
     }

@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class TodoViewModel : ViewModel() {
     // Hier für Demonstration: Temporäre Liste mit Todos + manueller Id
-    val todos: List<Todo> =
+    /*
+            val todos: List<Todo> =
         listOf(
             Todo(1, "Einkaufen"),
             Todo(2, "Lernen"),
@@ -14,7 +15,9 @@ class TodoViewModel : ViewModel() {
             Todo(4, "Projekt bearbeiten")
         )
     private var nextId = 5
-    private val _todoList = MutableStateFlow(todos)
+     */
+    private var nextId = 1
+    private val _todoList: MutableStateFlow<List<Todo>> = MutableStateFlow(emptyList())
     val todoList = _todoList.asStateFlow()
 
     fun toggleTodo(id: Int) {
