@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +97,7 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
             modifier = Modifier
                 .fillMaxHeight(1f)
         ) {
-            items(todos, key = { it.id } ) { todo ->
+            items(todos, key = { it.id }) { todo ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -109,6 +114,13 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
                         checked = todo.isDone,
                         onCheckedChange = { viewModel.toggleTodo(todo.id) }
                     )
+                    IconButton(onClick = { viewModel.deleteTodo(todo.id) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Löschen",
+                            tint = Color.Red
+                        )
+                    }
                 }
             }
         }

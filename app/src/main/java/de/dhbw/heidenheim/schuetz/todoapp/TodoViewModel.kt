@@ -27,6 +27,11 @@ class TodoViewModel : ViewModel() {
     fun addTodo(title: String) {
         _todoList.value = _todoList.value + Todo(nextId++, title)
     }
+
+    fun deleteTodo(id: Int) {
+        _todoList.value = _todoList.value.filter { it.id != id }
+    }
+
 }
 
 data class Todo(
