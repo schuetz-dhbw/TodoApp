@@ -51,7 +51,7 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
         modifier = modifier
             .fillMaxSize()
     ) {
-        items(todos) { todo ->
+        items(todos, key = { it.id } ) { todo ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -66,7 +66,7 @@ fun ToDoScreen(modifier: Modifier = Modifier, viewModel: TodoViewModel = viewMod
                 )
                 Checkbox(
                     checked = todo.isDone,
-                    onCheckedChange = { }
+                    onCheckedChange = { viewModel.toggleTodo(todo.id) }
                 )
             }
         }
