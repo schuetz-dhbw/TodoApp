@@ -13,6 +13,7 @@ class TodoViewModel : ViewModel() {
             Todo(3, "Auto waschen"),
             Todo(4, "Projekt bearbeiten")
         )
+    private var nextId = 5
     private val _todoList = MutableStateFlow(todos)
     val todoList = _todoList.asStateFlow()
 
@@ -21,6 +22,10 @@ class TodoViewModel : ViewModel() {
             if (it.id == id) it.copy(isDone = !it.isDone)
             else it
         }
+    }
+
+    fun addTodo(title: String) {
+        _todoList.value = _todoList.value + Todo(nextId++, title)
     }
 }
 
