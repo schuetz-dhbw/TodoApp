@@ -23,11 +23,10 @@ fun TodoListScreen(
     onToggle: (Int) -> Unit,
     onDelete: (Int) -> Unit,
     onItemClick: (Int) -> Unit,
-    onAddClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onAddClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Button(
             onClick = onAddClick,
