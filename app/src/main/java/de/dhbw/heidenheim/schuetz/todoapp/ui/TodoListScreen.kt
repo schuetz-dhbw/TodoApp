@@ -20,11 +20,18 @@ import de.dhbw.heidenheim.schuetz.todoapp.Todo
 @Composable
 fun TodoListScreen(
     todos: List<Todo>,
+    filterType: FilterType = FilterType.ALL,
     onToggle: (Int) -> Unit,
     onDelete: (Int) -> Unit,
     onItemClick: (Int) -> Unit,
     onAddClick: () -> Unit
 ) {
+    val filteredTodos = when (filterType) {
+        FilterType.ALL -> todos
+        FilterType.OPEN -> todos.filter { !it.isDone }
+        FilterType.DONE -> todos.filter { it.isDone }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -43,7 +50,11 @@ fun TodoListScreen(
             if (todos.isEmpty()) {
                 item {
                     Text(
-                        text = "Keine Einträge vorhanden",
+                        text = when (filterType) {
+                            FilterType.ALL -> "Keine Todos vorhanden"
+                            FilterType.OPEN -> "Keine offenen Todos"
+                            FilterType.DONE -> "Keine erledigten Todos"
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
@@ -53,7 +64,7 @@ fun TodoListScreen(
                     )
                 }
             } else {
-                items(todos, key = { it.id }) { todo ->
+                items(filteredTodos, key = { it.id }) { todo ->
                     TodoItem(
                         todo = todo,
                         onToggle = { onToggle(todo.id) },
@@ -64,6 +75,10 @@ fun TodoListScreen(
             }
         }
     }
+}
+
+enum class FilterType {
+    ALL, OPEN, DONE
 }
 
 @Preview(showBackground = true)

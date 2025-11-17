@@ -13,10 +13,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.AddTodoRoute
+import de.dhbw.heidenheim.schuetz.todoapp.ui.AllTodosRoute
+import de.dhbw.heidenheim.schuetz.todoapp.ui.BottomNavigationBar
+import de.dhbw.heidenheim.schuetz.todoapp.ui.DoneTodosRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.EditTodoRoute
+import de.dhbw.heidenheim.schuetz.todoapp.ui.FilterType
+import de.dhbw.heidenheim.schuetz.todoapp.ui.OpenTodosRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoFormScreen
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListScreen
@@ -32,16 +38,47 @@ class MainActivity : ComponentActivity() {
                 val todos by viewModel.todoList.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        // Bottom Nav nur auf Haupt-Screens, nicht auf Add/Edit
+                        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                        val showBottomBar = currentRoute?.contains("AddTodoRoute") == false && !currentRoute.contains("EditTodoRoute")
+
+                        if (showBottomBar) {
+                            BottomNavigationBar(navController = navController)
+                        }
+                    }
+                    ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = TodoListRoute,
+                        startDestination = AllTodosRoute,
                         modifier = Modifier.padding(innerPadding)
                     )
                     {
-                        composable<TodoListRoute> {
+                        composable<AllTodosRoute> {
                             TodoListScreen(
                                 todos = todos,
+                                filterType = FilterType.ALL,
+                                onToggle = { id -> viewModel.toggleTodo(id) },
+                                onDelete = { id -> viewModel.deleteTodo(id) },
+                                onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
+                                onAddClick = { navController.navigate(AddTodoRoute) }
+                            )
+                        }
+                        composable<OpenTodosRoute> {
+                            TodoListScreen(
+                                todos = todos,
+                                filterType = FilterType.OPEN,
+                                onToggle = { id -> viewModel.toggleTodo(id) },
+                                onDelete = { id -> viewModel.deleteTodo(id) },
+                                onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
+                                onAddClick = { navController.navigate(AddTodoRoute) }
+                            )
+                        }
+                        composable<DoneTodosRoute> {
+                            TodoListScreen(
+                                todos = todos,
+                                filterType = FilterType.DONE,
                                 onToggle = { id -> viewModel.toggleTodo(id) },
                                 onDelete = { id -> viewModel.deleteTodo(id) },
                                 onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
