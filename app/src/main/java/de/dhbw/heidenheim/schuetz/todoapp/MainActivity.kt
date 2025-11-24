@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import dagger.hilt.android.AndroidEntryPoint
 import de.dhbw.heidenheim.schuetz.todoapp.ui.AddTodoRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.AllTodosRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.BottomNavigationBar
@@ -28,6 +29,7 @@ import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListScreen
 import de.dhbw.heidenheim.schuetz.todoapp.ui.theme.ToDoAppTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
