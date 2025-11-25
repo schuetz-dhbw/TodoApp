@@ -1,33 +1,56 @@
 package de.dhbw.heidenheim.schuetz.todoapp
 
+import android.util.Log.d
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import de.dhbw.heidenheim.schuetz.todoapp.data.repository.TodoRepository
+import jakarta.inject.Inject
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class TodoViewModel : ViewModel() {
-    private var nextId = 1
-    private val _todoList: MutableStateFlow<List<Todo>> = MutableStateFlow(emptyList())
-    val todoList = _todoList.asStateFlow()
+@HiltViewModel
+class TodoViewModel @Inject constructor(private val repository: TodoRepository) : ViewModel() {
+    val todoList: StateFlow<List<Todo>> = repository.getAllTodos()
+        .map { todoEntities ->
+            todoEntities.map { entity ->
+                Todo(
+                    id = entity.id,
+                    title = entity.title,
+                    isDone = entity.isDone
+                )
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     fun toggleTodo(id: Int) {
-        _todoList.value = _todoList.value.map {
-            if (it.id == id) it.copy(isDone = !it.isDone)
-            else it
+        viewModelScope.launch {
+            repository.toggleTodo(id)
         }
     }
 
     fun addTodo(title: String) {
-        _todoList.value = _todoList.value + Todo(nextId++, title)
+        viewModelScope.launch {
+            repository.addTodo(title)
+        }
     }
 
     fun deleteTodo(id: Int) {
-        _todoList.value = _todoList.value.filter { it.id != id }
+        viewModelScope.launch {
+            repository.deleteTodo(id)
+        }
     }
 
-    fun updateTodo(id: Int, newTitle: String) {
-        _todoList.value = _todoList.value.map {
-            if (it.id == id) it.copy(title = newTitle)
-            else it
+    fun editTodo(id: Int, newTitle: String) {
+        viewModelScope.launch {
+            repository.editTodo(id, newTitle)
         }
     }
 }

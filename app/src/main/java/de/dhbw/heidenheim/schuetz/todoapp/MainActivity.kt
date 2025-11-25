@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ToDoAppTheme {
-                val viewModel: TodoViewModel = viewModel()
+                val viewModel: TodoViewModel = hiltViewModel()
                 val todos by viewModel.todoList.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
 
@@ -108,7 +109,7 @@ class MainActivity : ComponentActivity() {
                                     initialTitle = it.title,
                                     isEdit = true,
                                     onSave = { newTitle ->
-                                        viewModel.updateTodo(it.id, newTitle)
+                                        viewModel.editTodo(it.id, newTitle)
                                         navController.popBackStack()
                                     },
                                     onCancel = {
