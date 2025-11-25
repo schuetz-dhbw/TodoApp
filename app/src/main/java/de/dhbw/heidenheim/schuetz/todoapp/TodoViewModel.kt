@@ -1,6 +1,5 @@
 package de.dhbw.heidenheim.schuetz.todoapp
 
-import android.util.Log.d
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

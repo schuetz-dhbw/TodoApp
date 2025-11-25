@@ -1,9 +1,7 @@
 package de.dhbw.heidenheim.schuetz.todoapp.data.repository
 
-import de.dhbw.heidenheim.schuetz.todoapp.Todo
 import de.dhbw.heidenheim.schuetz.todoapp.data.local.TodoDao
 import de.dhbw.heidenheim.schuetz.todoapp.data.local.TodoEntity
-import kotlinx.coroutines.NonCancellable.isCompleted
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,13 +32,6 @@ class TodoRepository @Inject constructor(
         todoDao.insertTodo(todo)
     }
 
-    suspend fun deleteTodo(todo: Todo) {
-        return todoDao.deleteTodo(TodoEntity(
-            id = todo.id,
-            title = todo.title,
-            isDone = todo.isDone
-        ))
-    }
     suspend fun editTodo(id: Int, newTitle: String) {
         val todo = todoDao.getTodoById(id) ?: return
         todoDao.updateTodo(todo.copy(title = newTitle))

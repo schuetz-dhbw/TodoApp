@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,7 +25,6 @@ import de.dhbw.heidenheim.schuetz.todoapp.ui.EditTodoRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.FilterType
 import de.dhbw.heidenheim.schuetz.todoapp.ui.OpenTodosRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoFormScreen
-import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListRoute
 import de.dhbw.heidenheim.schuetz.todoapp.ui.TodoListScreen
 import de.dhbw.heidenheim.schuetz.todoapp.ui.theme.ToDoAppTheme
 

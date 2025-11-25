@@ -1,7 +1,6 @@
 package de.dhbw.heidenheim.schuetz.todoapp.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -24,7 +23,4 @@ interface TodoDao {
 
     @Query("DELETE FROM todos WHERE id = :id")
     suspend fun deleteTodoById(id: Int)
-
-    @Delete
-    suspend fun deleteTodo(todo: TodoEntity)
 }
