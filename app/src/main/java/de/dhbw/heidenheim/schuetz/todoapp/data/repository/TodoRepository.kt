@@ -1,5 +1,7 @@
 package de.dhbw.heidenheim.schuetz.todoapp.data.repository
 
+import de.dhbw.heidenheim.schuetz.todoapp.data.remote.TodoApi
+import de.dhbw.heidenheim.schuetz.todoapp.Todo
 import de.dhbw.heidenheim.schuetz.todoapp.data.local.TodoDao
 import de.dhbw.heidenheim.schuetz.todoapp.data.local.TodoEntity
 import kotlinx.coroutines.flow.Flow
@@ -8,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class TodoRepository @Inject constructor(
-    private val todoDao: TodoDao
+    private val todoDao: TodoDao,
+    private val todoApi: TodoApi
 ) {
     fun getAllTodos(): Flow<List<TodoEntity>> {
         return todoDao.getAllTodos()
@@ -35,5 +38,35 @@ class TodoRepository @Inject constructor(
     suspend fun editTodo(id: Int, newTitle: String) {
         val todo = todoDao.getTodoById(id) ?: return
         todoDao.updateTodo(todo.copy(title = newTitle))
+    }
+
+    suspend fun loadTodosFromApi(): Result<List<Todo>> {
+        return try {
+            val todoDtos = todoApi.getTodos()
+
+            // Mapping: DTO -> Domain Model
+            val todos = todoDtos.map { todoDto ->
+                Todo(
+                    id = todoDto.id,
+                    title = todoDto.title,
+                    isDone = todoDto.completed
+                )
+            }
+
+            // Optional: In lokale DB speichern
+            todos.forEach { todo ->
+                todoDao.insertTodo(
+                    TodoEntity(
+                        id = todo.id,
+                        title = todo.title,
+                        isDone = todo.isDone
+                    )
+                )
+            }
+
+            Result.success(todos)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

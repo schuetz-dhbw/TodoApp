@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.dhbw.heidenheim.schuetz.todoapp.data.repository.TodoRepository
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,7 +30,11 @@ class TodoViewModel @Inject constructor(private val repository: TodoRepository) 
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
+    private val _error = MutableStateFlow<String?>(null)
+    val error = _error.asStateFlow()
     fun toggleTodo(id: Int) {
         viewModelScope.launch {
             repository.toggleTodo(id)
@@ -50,6 +56,24 @@ class TodoViewModel @Inject constructor(private val repository: TodoRepository) 
     fun editTodo(id: Int, newTitle: String) {
         viewModelScope.launch {
             repository.editTodo(id, newTitle)
+        }
+    }
+    fun loadTodosFromApi() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            val result = repository.loadTodosFromApi()
+
+            result
+                .onSuccess {
+                    // Todos werden automatisch über Room-Flow aktualisiert
+                }
+                .onFailure { exception ->
+                    _error.value = exception.message ?: "Unknown Error"
+                }
+
+            _isLoading.value = false
         }
     }
 }

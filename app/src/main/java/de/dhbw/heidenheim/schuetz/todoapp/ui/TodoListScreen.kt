@@ -1,12 +1,16 @@
 package de.dhbw.heidenheim.schuetz.todoapp.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,11 +24,14 @@ import de.dhbw.heidenheim.schuetz.todoapp.Todo
 @Composable
 fun TodoListScreen(
     todos: List<Todo>,
+    isLoading: Boolean,
+    error: String?,
     filterType: FilterType = FilterType.ALL,
     onToggle: (Int) -> Unit,
     onDelete: (Int) -> Unit,
     onItemClick: (Int) -> Unit,
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    onLoadFromApi: () -> Unit
 ) {
     val filteredTodos = when (filterType) {
         FilterType.ALL -> todos
@@ -35,13 +42,39 @@ fun TodoListScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Button(
-            onClick = onAddClick,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "Neues Todo hinzufügen")
+            Button(
+                onClick = onAddClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Neues Todo")
+            }
+            Button(
+                onClick = onLoadFromApi,
+                enabled = !isLoading,
+                modifier = Modifier.weight(1f)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Text("Von API laden")
+                }
+            }
+        }
+
+        error?.let {
+            Text(
+                text = "Error: $it",
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
         }
         LazyColumn(
             modifier = Modifier
@@ -90,9 +123,12 @@ fun TodoListScreenPreview() {
             Todo(2, "Lernen", true),
             Todo(3, "Sport", false)
         ),
+        isLoading = false,
+        error = "",
         onToggle = {},
         onDelete = {},
         onItemClick = {},
-        onAddClick = {}
+        onAddClick = {},
+        onLoadFromApi = {}
     )
 }

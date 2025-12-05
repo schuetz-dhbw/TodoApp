@@ -37,6 +37,8 @@ class MainActivity : ComponentActivity() {
             ToDoAppTheme {
                 val viewModel: TodoViewModel = hiltViewModel()
                 val todos by viewModel.todoList.collectAsStateWithLifecycle()
+                val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+                val error by viewModel.error.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
 
                 Scaffold(modifier = Modifier.fillMaxSize(),
@@ -59,31 +61,40 @@ class MainActivity : ComponentActivity() {
                         composable<AllTodosRoute> {
                             TodoListScreen(
                                 todos = todos,
+                                isLoading = isLoading,
+                                error = error,
                                 filterType = FilterType.ALL,
                                 onToggle = { id -> viewModel.toggleTodo(id) },
                                 onDelete = { id -> viewModel.deleteTodo(id) },
                                 onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
-                                onAddClick = { navController.navigate(AddTodoRoute) }
+                                onAddClick = { navController.navigate(AddTodoRoute) },
+                                onLoadFromApi = { viewModel.loadTodosFromApi() }
                             )
                         }
                         composable<OpenTodosRoute> {
                             TodoListScreen(
                                 todos = todos,
+                                isLoading = isLoading,
+                                error = error,
                                 filterType = FilterType.OPEN,
                                 onToggle = { id -> viewModel.toggleTodo(id) },
                                 onDelete = { id -> viewModel.deleteTodo(id) },
                                 onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
-                                onAddClick = { navController.navigate(AddTodoRoute) }
+                                onAddClick = { navController.navigate(AddTodoRoute) },
+                                onLoadFromApi = { viewModel.loadTodosFromApi() }
                             )
                         }
                         composable<DoneTodosRoute> {
                             TodoListScreen(
                                 todos = todos,
+                                isLoading = isLoading,
+                                error = error,
                                 filterType = FilterType.DONE,
                                 onToggle = { id -> viewModel.toggleTodo(id) },
                                 onDelete = { id -> viewModel.deleteTodo(id) },
                                 onItemClick = { id -> navController.navigate(EditTodoRoute(todoId = id)) },
-                                onAddClick = { navController.navigate(AddTodoRoute) }
+                                onAddClick = { navController.navigate(AddTodoRoute) },
+                                onLoadFromApi = { viewModel.loadTodosFromApi() }
                             )
                         }
                         composable<AddTodoRoute> {
